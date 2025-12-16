@@ -142,3 +142,83 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+.participants {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #e6e6e6;
+  background: linear-gradient(90deg, rgba(250,250,251,1) 0%, rgba(255,255,255,1) 100%);
+  border-radius: 0 0 6px 6px;
+}
+
+.participants-title {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.participants-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: #444;
+  font-size: 14px;
+  max-height: 8rem;
+  overflow: auto;
+}
+
+.participants-list li {
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.participants-list li:last-child {
+  border-bottom: none;
+}
+
+.participants .placeholder {
+  color: #777;
+  font-style: italic;
+  list-style-type: none;
+  margin-left: 0;
+  padding: 6px 0;
+}
+
+/* kleiner visueller Punkt vor jeder E-Mail */
+.participants-list li::before {
+  content: none;
+}
+
+.participant-email {
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.remove-btn:hover {
+  background: rgba(198,40,40,0.08);
+}
+
+/* responsive Feinheit */
+@media (max-width: 600px) {
+  .participants-list {
+    max-height: 6rem;
+  }
+}
