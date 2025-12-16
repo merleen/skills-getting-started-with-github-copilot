@@ -41,6 +41,23 @@
       </section>
     </main>
 
+    <!-- Template für eine Aktivitätskarte (wird per JS geklont und befüllt) -->
+    <template id="activity-template">
+      <div class="activity-card">
+        <h4 class="activity-name"></h4>
+        <p class="activity-description"></p>
+        <p class="activity-schedule"></p>
+        <p class="activity-spots"><strong>Max. Plätze:</strong> <span class="activity-spots-count"></span></p>
+
+        <div class="participants">
+          <h5 class="participants-title">Teilnehmer</h5>
+          <ul class="participants-list">
+            <!-- JS fügt hier<li>email@beispiel</li> Elemente ein -->
+          </ul>
+        </div>
+      </div>
+    </template>
+
     <footer>
       <p>&copy; 2023 Mergington High School</p>
     </footer>

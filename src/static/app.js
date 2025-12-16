@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const template = document.getElementById("activity-template");
 
   // Function to fetch activities from API
   async function fetchActivities() {
@@ -10,24 +11,48 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/activities");
       const activities = await response.json();
 
-      // Clear loading message
+      // Clear loading message and previous items
       activitiesList.innerHTML = "";
 
-      // Populate activities list
+      // Reset select options (keep placeholder)
+      Array.from(activitySelect.options)
+        .slice(1)
+        .forEach((opt) => opt.remove());
+
+      // Populate activities list using template
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
+        const clone = template.content.cloneNode(true);
+        const card = clone.querySelector(".activity-card");
+        clone.querySelector(".activity-name").textContent = name;
+        clone.querySelector(".activity-description").textContent = details.description;
+        clone.querySelector(".activity-schedule").innerHTML = `<strong>Schedule:</strong> ${details.schedule}`;
+        clone.querySelector(".activity-spots-count").textContent = details.max_participants;
 
         const spotsLeft = details.max_participants - details.participants.length;
+        const availabilityP = document.createElement("p");
+        availabilityP.innerHTML = `<strong>Availability:</strong> ${spotsLeft} spots left`;
+        card.appendChild(availabilityP);
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
+        const participantsDiv = clone.querySelector(".participants");
+        const participantsList = clone.querySelector(".participants-list");
+        participantsList.innerHTML = "";
 
-        activitiesList.appendChild(activityCard);
+        if (details.participants && details.participants.length > 0) {
+          participantsDiv.classList.remove("empty");
+          details.participants.forEach((email) => {
+            const li = document.createElement("li");
+            li.textContent = email;
+            participantsList.appendChild(li);
+          });
+        } else {
+          participantsDiv.classList.add("empty");
+          const li = document.createElement("li");
+          li.textContent = "Keine Teilnehmer bisher.";
+          li.className = "placeholder";
+          participantsList.appendChild(li);
+        }
+
+        activitiesList.appendChild(clone);
 
         // Add option to select dropdown
         const option = document.createElement("option");
@@ -60,11 +85,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         messageDiv.textContent = result.message;
-        messageDiv.className = "success";
+        messageDiv.className = "message success";
         signupForm.reset();
+        // Refresh activities to show updated participants
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
-        messageDiv.className = "error";
+        messageDiv.className = "message error";
       }
 
       messageDiv.classList.remove("hidden");
@@ -75,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 5000);
     } catch (error) {
       messageDiv.textContent = "Failed to sign up. Please try again.";
-      messageDiv.className = "error";
+      messageDiv.className = "message error";
       messageDiv.classList.remove("hidden");
       console.error("Error signing up:", error);
     }
