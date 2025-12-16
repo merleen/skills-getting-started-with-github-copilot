@@ -41,7 +41,50 @@ document.addEventListener("DOMContentLoaded", () => {
           participantsDiv.classList.remove("empty");
           details.participants.forEach((email) => {
             const li = document.createElement("li");
-            li.textContent = email;
+
+            const emailSpan = document.createElement("span");
+            emailSpan.className = "participant-email";
+            emailSpan.textContent = email;
+
+            const removeBtn = document.createElement("button");
+            removeBtn.className = "remove-btn";
+            removeBtn.type = "button";
+            removeBtn.title = `Unregister ${email}`;
+            removeBtn.innerHTML = "&times;";
+
+            // attach click handler to remove participant
+            removeBtn.addEventListener("click", async (e) => {
+              e.preventDefault();
+              const activityName = name;
+              try {
+                const res = await fetch(
+                  `/activities/${encodeURIComponent(activityName)}/signup?email=${encodeURIComponent(email)}`,
+                  { method: "DELETE" }
+                );
+
+                const result = await res.json();
+                if (res.ok) {
+                  // refresh activities to reflect change
+                  fetchActivities();
+                  messageDiv.textContent = result.message;
+                  messageDiv.className = "message success";
+                  messageDiv.classList.remove("hidden");
+                  setTimeout(() => messageDiv.classList.add("hidden"), 4000);
+                } else {
+                  messageDiv.textContent = result.detail || "Failed to unregister";
+                  messageDiv.className = "message error";
+                  messageDiv.classList.remove("hidden");
+                }
+              } catch (err) {
+                console.error("Error unregistering:", err);
+                messageDiv.textContent = "Failed to unregister. Try again.";
+                messageDiv.className = "message error";
+                messageDiv.classList.remove("hidden");
+              }
+            });
+
+            li.appendChild(emailSpan);
+            li.appendChild(removeBtn);
             participantsList.appendChild(li);
           });
         } else {
